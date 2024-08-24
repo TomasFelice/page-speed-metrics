@@ -1,0 +1,19 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "development": "vite dev",
+        "build-css": "npx postcss resources/css/app.css -o public/css/app.css",
+        "watch-css": "npx postcss resources/css/app.css -o public/css/app.css --watch"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.20",
+        "axios": "^1.1.2",
+        "laravel-vite-plugin": "^0.7.2",
+        "postcss": "^8.4.41",
+        "postcss-cli": "^11.0.0",
+        "tailwindcss": "^3.4.10",
+        "vite": "^4.0.0"
+    }
+}
