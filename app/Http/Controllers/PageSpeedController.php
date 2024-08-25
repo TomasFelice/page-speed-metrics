@@ -5,15 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\MetricHistoryRun;
 use App\Models\Strategy;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use App\Services\PageSpeedService;
 use Illuminate\Http\Request;
 
 class PageSpeedController extends Controller
 {
 
-    protected $PAGE_SPEED_URL = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
+    protected $pageSpeedService;
 
+    /**
+     * PageSpeedController constructor. Realizo la inyeccion de dependencias
+     *
+     * @param PageSpeedService $pageSpeedService
+     */
+    public function __construct(PageSpeedService $pageSpeedService)
+    {
+        $this->pageSpeedService = $pageSpeedService;
+    }
+
+    /**
+     * Carga la pantalla principal para consultar las metricas
+     *
+     * @return Factory|View
+     */
     public function index()
     {
         $categories = Category::all();
@@ -22,6 +36,12 @@ class PageSpeedController extends Controller
         return view('pagespeed.index', compact('categories', 'strategies'));
     }
 
+    /**
+     * Obtiene la peticion de AJAX y consulta el web service de Google para obtener las metricas
+     *
+     * @param Request $request
+     * @return string
+     */
     public function fetchMetrics(Request $request)
     {
         $validated = $request->validate([
@@ -30,63 +50,17 @@ class PageSpeedController extends Controller
             'strategy' => 'required|string|exists:strategies,name'
         ]);
 
-        // $queryParams = [
-        //     'url' => $validated['url'],
-        //     'strategy' => $validated['strategy'],
-        //     'key' => env('GOOGLE_API_KEY')
-        // ];
+        $result = $this->pageSpeedService->fetchMetrics($validated);
 
-        // foreach ($validated['categories'] as $category) {
-        //     $queryParams['category'][] = $category;
-        // }
-
-        // $queryParams = http_build_query($queryParams);
-
-        $queryParams = 'url=' . $validated['url'] . '&key=' . env('GOOGLE_API_KEY') . '&strategy=' . $validated['strategy'];
-
-        foreach ($validated['categories'] as $category) {
-            $queryParams .= '&category=' . $category;
-        }
-
-        error_log('Query Params: ' . $queryParams);
-
-        try {
-            $client = new Client(['verify' => false]);
-            // $response = $client->request('GET', $this->PAGE_SPEED_URL, [
-            //     'query' => $queryParams
-            // ]);
-
-            $response = $client->request('GET', $this->PAGE_SPEED_URL . '?' . $queryParams);
-
-            if ($response) {
-                $contents = json_decode($response->getBody()->getContents());
-                $metrics = $contents->lighthouseResult->categories;
-                error_log('Metrics: ' . print_r($contents, true));
-                $data = [];
-                foreach ($metrics as $key => $metric) {
-                    $data[$key] = $metric->score;
-                }
-            }
-
-            error_log('Response: ' . print_r($data, true));
-
-            echo json_encode([
-                'success' => true,
-                'data' => $data,
-                'status' => 200,
-            ]);
-
-        } catch (GuzzleException $e) {
-            echo json_encode([
-                'success' => false,
-                'data' => null,
-                'status' => 500,
-                'error' => $e->getMessage()
-            ]);
-        }
+        return response()->json($result);
     }
 
-
+    /**
+     * Recibe la solicitud vía ajax y almacena la metrica en la base de datos
+     *
+     * @param Request $request
+     * @return string
+     */
     public function storeMetricRun(Request $request)
     {
         $validated = $request->validate([
@@ -96,17 +70,12 @@ class PageSpeedController extends Controller
         ]);
 
         $strategyId = Strategy::where('name', $validated['strategy'])->first()->id;
-
-        $metrics = [];
-        foreach ($validated['metrics'] as $key => $metric) {
-            $metrics[$metric['name']] = $metric['value'];
-        }
+        $metrics = $validated['metrics'];
         
         $metricRun = MetricHistoryRun::create([
             'url' => $validated['url'],
             'strategy_id' => $strategyId,
-            'accesibility_metric' => $metrics['ACCESSIBILITY'] ?? null,
-            'pwa_metric' => $metrics['PWA'] ?? null,
+            'accessibility_metric' => $metrics['ACCESSIBILITY'] ?? null,
             'performance_metric' => $metrics['PERFORMANCE'] ?? null,
             'seo_metric' => $metrics['SEO'] ?? null,
             'best_practices_metric' => $metrics['BEST_PRACTICES'] ?? null,

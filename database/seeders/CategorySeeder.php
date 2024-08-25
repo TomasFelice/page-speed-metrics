@@ -16,7 +16,6 @@ class CategorySeeder extends Seeder
             'ACCESSIBILITY',
             'BEST_PRACTICES',
             'PERFORMANCE',
-            'PWA',
             'SEO',
         ];
 

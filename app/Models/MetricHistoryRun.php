@@ -13,7 +13,6 @@ class MetricHistoryRun extends Model
         'strategy_id',
         'url',
         'accessibility_metric',
-        'pwa_metric',
         'performance_metric',
         'best_practices_metric',
         'seo_metric',
@@ -26,7 +25,7 @@ class MetricHistoryRun extends Model
 
     public function getAverageMetricAttribute()
     {
-        return ($this->accessibility_metric + $this->pwa_metric + $this->performance_metric + $this->best_practices_metric + $this->seo_metric) / 5;
+        return ($this->accessibility_metric + $this->performance_metric + $this->best_practices_metric + $this->seo_metric) / 5;
     }
 
 }

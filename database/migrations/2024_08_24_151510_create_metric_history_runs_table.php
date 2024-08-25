@@ -20,7 +20,6 @@ return new class extends Migration
             );
             $table->string('url');
             $table->decimal('accessibility_metric', 4, 2)->nullable();
-            $table->decimal('pwa_metric', 4, 2)->nullable();
             $table->decimal('performance_metric', 4, 2)->nullable();
             $table->decimal('best_practices_metric', 4, 2)->nullable();
             $table->decimal('seo_metric', 4, 2)->nullable();
