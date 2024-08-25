@@ -18,12 +18,12 @@ return new class extends Migration
                 column: 'id',
                 indexName: 'fk_metric_history_runs_strategy_id'
             );
-            $table->decimal('url', 4, 2);
-            $table->decimal('accessibility_metric', 4, 2);
-            $table->decimal('pwa_metric', 4, 2);
-            $table->decimal('performance_metric', 4, 2);
-            $table->decimal('best_practices_metric', 4, 2);
-            $table->decimal('seo_metric', 4, 2);
+            $table->string('url');
+            $table->decimal('accessibility_metric', 4, 2)->nullable();
+            $table->decimal('pwa_metric', 4, 2)->nullable();
+            $table->decimal('performance_metric', 4, 2)->nullable();
+            $table->decimal('best_practices_metric', 4, 2)->nullable();
+            $table->decimal('seo_metric', 4, 2)->nullable();
             $table->timestamps();
         });
     }

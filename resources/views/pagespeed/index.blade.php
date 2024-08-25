@@ -39,6 +39,40 @@
     </div>
 </div>
 
+<section id="loading-modal">
+    <div id="loading-content"></div>
+</section>
+
+
+<style>
+.loading {
+	z-index: 20;
+	position: absolute;
+	top: 0;
+	left:-5px;
+	width: 100%;
+	height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.loading-content {
+	position: absolute;
+	border: 16px solid #f3f3f3; /* Light grey */
+	border-top: 16px solid #3498db; /* Blue */
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	animation: spin 2s linear infinite;
+}
+	
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
 <script type="module">
 $(document).ready(function() {
     $('#fetch-metrics').click(function() {
@@ -59,7 +93,17 @@ $(document).ready(function() {
                 strategy: strategy
             },
             dataType: "json",
+            beforeSend: function() {
+                // Agrego las clases loading y loading-content
+                $('#loading-modal').addClass('loading');
+                $('#loading-content').addClass('loading-content');
+                $('#loading-modal h4').removeClass('hidden');
+            },
             success: function(response) {
+
+                $('#loading-modal').removeClass('loading');
+                $('#loading-content').removeClass('loading-content');
+                $('#loading-modal h4').addClass('hidden');
 
                 if (response.error) {
                     return alert(response.error);
@@ -71,7 +115,7 @@ $(document).ready(function() {
                 for (const key in obj) {
                     if (obj.hasOwnProperty(key)) {
                         const element = obj[key];
-                        results += `<p class="mb-2"><span class="font-semibold">${key}:</span> ${element}</p>`;
+                        results += `<p class="mb-2" data-metric="${key}" data-value="${element}"><span class="font-semibold">${key}:</span> ${element}</p>`;
                     }
                 }
 
@@ -79,6 +123,9 @@ $(document).ready(function() {
                 $('#save-metrics').removeClass('hidden');
             },
             error: function(xhr, status, error) {
+                $('#loading-modal').removeClass('loading');
+                $('#loading-content').removeClass('loading-content');
+                $('#loading-modal h4').addClass('hidden');
                 console.error('Error:', error);
             }
         });
@@ -86,19 +133,23 @@ $(document).ready(function() {
 
     $('#save-metrics').click(function() {
         const url = $('#url').val();
-        const categories = $('input[name="categories[]"]:checked').map(function() {
-            return $(this).val();
-        }).get();
         const strategy = $('#strategy').val();
+        const metrics = $('p[data-metric]').map(function() {
+            const name = $(this).attr('data-metric').toUpperCase();
+            const value = $(this).attr('data-value');
+            // Necesito que name sea el nombre del atributo y el value sea el valor del atributo. Ejemplo: ['PERFORMANCE': 90.01]
+            return { name, value };
+        }).get();
 
+        console.log(metrics);
         $.ajax({
-            url: "{{ route('pagespeed.saveMetrics') }}",
+            url: "{{ route('pagespeed.storeMetricRun') }}",
             type: "POST",
             data: {
                 _token: "{{ csrf_token() }}",
                 url: url,
-                categories: categories,
-                strategy: strategy
+                strategy: strategy,
+                metrics: metrics
             },
             dataType: "json",
             success: function(response) {
