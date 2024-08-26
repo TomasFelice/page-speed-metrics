@@ -33,7 +33,7 @@
                 <select id="strategy" class="w-full p-2 border border-gray-300 rounded">
                     <option value="">{{ __('messages.select_strategy') }}</option>
                     @foreach ($strategies as $strategy)
-                        <option value="{{ $strategy->name }}">{{ $strategy->name }}</option>
+                        <option value="{{ $strategy->name }}">{{ __('messages.'.strtolower($strategy->name)) }}</option>
                     @endforeach
                 </select>
             </div>

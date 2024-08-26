@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // English
 return [
@@ -33,4 +33,17 @@ return [
     'url_message' => 'Enter a valid URL, including "http://" or "https://"',
     'datatables_language' => '//cdn.datatables.net/plug-ins/1.13.6/i18n/en-US.json',
     'success' => 'Success',
+    'language_changed' => 'Language changed successfully',
+    'error_changing_language' => 'An error occurred while changing language',
+    'new_language_is' => 'The new language is',
+    'mobile' => 'Mobile',
+    'desktop' => 'Desktop',
+    'actions' => 'Actions',
+    'are_you_sure' => 'Are you sure?',
+    'you_wont_be_able_to_revert_this' => 'You wont be able to revert this!',
+    'yes_delete_it' => 'Yes, delete it!',
+    'cancel' => 'Cancel',
+    'deleted' => 'Deleted',
+    'metric_deleted' => 'Metric deleted successfully',
+    'something_went_wrong' => 'Something went wrong',
 ];

@@ -18,4 +18,19 @@ class MetricHistoryController extends Controller
         return view('metrics.index', compact('metrics'));
     }
 
+    /**
+     * Elimina una métrica.
+     *
+     * @param $id
+     * @return RedirectResponse
+     */
+    public function destroy(int $id)
+    {
+        $metric = MetricHistoryRun::find($id);
+        if ($metric) {
+            $metric->delete();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false], 404);
+    }
 }

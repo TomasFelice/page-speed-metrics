@@ -1,16 +1,20 @@
 <script type="module">
+
     $(document).ready(function() {
         $('#metrics-table').DataTable({
             "order": [
                 [6, "desc"]
             ],
-            "paging": true, 
+            "paging": true,
             "searching": true,
             "info": true,
             "lengthChange": true,
             "language": {
                 "url": "{{ __('messages.datatables_language') }}"
-            }
+            },
+            "scrollX": true,
+            "autoWidth": true,
+            "responsive": true
         });
     });
 </script>

@@ -24,4 +24,11 @@ Route::post('/fetch-metrics', [PageSpeedController::class, 'fetchMetrics'])->nam
 Route::post('/store-metric-run', [PageSpeedController::class, 'storeMetricRun'])->name('pagespeed.storeMetricRun');
 
 Route::get('/metrics', [MetricHistoryController::class, 'index'])->name('metrics.index');
+Route::post('/metrics/{id}', [MetricHistoryController::class, 'destroy'])->name('metrics.destroy');
 
+Route::get('/change-language/{lang}', function ($lang) {
+    if (in_array($lang, ['en', 'es'])) {
+        session(['locale' => $lang]);
+    }
+    return redirect()->back();
+})->name('change.language');

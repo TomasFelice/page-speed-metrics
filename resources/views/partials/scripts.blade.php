@@ -14,12 +14,43 @@
 <script>
     $(document).ready(function() {
         $('#change-language').on('click', function() {
-            if (app.locale == 'en') {
-                app.locale = 'es';
-            } else {
-                app.locale = 'en';
-            }
-            location.reload();
+            const currentLocale = '{{ app()->getLocale() }}';
+            const newLocale = currentLocale === 'en' ? 'es' : 'en';
+            let url = '{{ route('change.language', ['lang' => ':lang']) }}';
+            url = url.replace(':lang', newLocale);
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    locale: newLocale
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: (
+                            newLocale === 'es' ?
+                            '{{ __("messages.success", [], "es") }}' :
+                            '{{ __("messages.success", [], "en") }}'
+                        ),
+                        text: (
+                            newLocale === 'es' ?
+                            '{{ __("messages.new_language_is", [], "es") }}: Español' :
+                            '{{ __("messages.new_language_is", [], "en") }}: English'
+                        ),
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function() {
+                    Swal.fire('Error', '{{ __('messages.error_changing_language') }}',
+                        'error');
+                }
+            });
         })
     });
 </script>
