@@ -1,9 +1,9 @@
-# Broobe Challenge
+# Page Speed Metrics
 
 Para poder ejecutar el proyecto localmente en tu máquina, sigue los siguientes pasos:
 # Pasos para ejecutar el proyecto localmente
 
-1. Clona el repositorio en tu máquina utilizando el comando `git clone https://github.com/TomasFelice/broobe-challenge.git`.
+1. Clona el repositorio en tu máquina utilizando el comando `git clone https://github.com/TomasFelice/page-speed-metrics.git`.
 
 2. Asegúrate de tener instalado PHP y algún servidor de base de datos MySQL para poder ejecutar el servidor local.
 
